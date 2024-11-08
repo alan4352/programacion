@@ -10,36 +10,35 @@ char direccion[] = "datos.dat";
 char direccion_ordenado[] = "ordenado.dat";
 
 struct Fecha {
-    int dia;
-    int mes;
-    int ano;
+int dia;
+int mes;
+int ano;
 };
-
-struct Empleado {
-    char nombre[10];
-    int id;
+struct Investigador {
+char nombre[10];
+char especialidad[20];
 };
-
-struct OrdenTrabajo {
-    int numero;
-    Fecha fecha;
-    Empleado responsable;
+struct ProyectoInvestigacion {
+char titulo[15];
+Fecha fechaInicio;
+Investigador lider;
+int ID;
 };
 
 void crear();
 void agregar();
 void visualizar();
 void visualizar_ordenado();
-void ordBurbuja(OrdenTrabajo a[], int n);
+void ordBurbuja(ProyectoInvestigacion a[], int n);
 void ordenar();
-void crearOrdenTrabajo();
+void crearProyecto();
 void eliminar_registros();
 
 int main() {
     int opc;
     do {
         printf("\n === MENU ===\n");
-        printf("\n1. Crear Orden de Trabajo");
+        printf("\n1. Crear Proyecto de investigación");
         printf("\n2. Agregar mas registros");
         printf("\n3. Visualizar registros existentes");
         printf("\n4. Ordenar");
@@ -50,7 +49,7 @@ int main() {
         scanf("%i", &opc);
         switch (opc) {
             case 1: 
-                crearOrdenTrabajo();
+                crearProyecto();
                 break;
             case 2: 
                 agregar();
@@ -75,29 +74,31 @@ int main() {
 }
 
 
-void crearOrdenTrabajo() {
-    OrdenTrabajo orden;
+void crearProyecto() {
+    ProyectoInvestigacion proy;
     char continuar;
-    fd = fopen("orden_trabajo.dat", "wb");
+    fd = fopen("Proyecto_investigacion.dat", "wb");
 
     if (fd == NULL) {
-        printf("\n*** Error al tratar de abrir el archivo de órdenes de trabajo **** \n");
+        printf("\n*** Error al tratar de abrir el archivo de proyectos de investigacion **** \n");
         return;
     } else {
-        printf("\n==> Creando Orden de Trabajo <==\n");
+        printf("\n==> Creando Proyecto de Investigacion <==\n");
         do {
-            cout << "\nNumero de orden: ";
-            cin >> orden.numero;
+            cout << "\nEspecialidad del investigador: ";
+            cin >> proy.lider.especialidad;
             cout << "Fecha (dia mes año): ";
-            cin >> orden.fecha.dia >> orden.fecha.mes >> orden.fecha.ano;
+            cin >> proy.fechaInicio.dia >> proy.fechaInicio.mes >> proy.fechaInicio.ano;
             cout << "Nombre del responsable: ";
             fflush(stdin);
-            gets(orden.responsable.nombre);
-            cout << "ID del responsable: ";
-            cin >> orden.responsable.id;
+            gets(proy.lider.nombre);
+            cout << "Titulo del investigador: ";
+            cin >> proy.titulo;
+			cout << "ID del investigador: ";
+            cin >> proy.ID;
 
-            fwrite(&orden, sizeof(OrdenTrabajo), 1, fd);
-            printf("\n>> Desea ingresar otra orden de trabajo? (Si-s No-n): ");
+            fwrite(&proy, sizeof(ProyectoInvestigacion), 1, fd);
+            printf("\n>> Desea ingresar otro proyecto? (Si-s No-n): ");
             fflush(stdin);
             scanf("%c", &continuar);
         } while ((continuar == 's') || (continuar == 'S'));
@@ -108,27 +109,28 @@ void crearOrdenTrabajo() {
 
 void agregar() {
     char continuar;
-    OrdenTrabajo orden;
+    ProyectoInvestigacion proy;
     fd = fopen(direccion, "ab+");
 
-        if (fd == NULL) {
-        printf("\n*** Error al tratar de abrir el archivo de órdenes de trabajo **** \n");
+         if (fd == NULL) {
+        printf("\n*** Error al tratar de abrir el archivo de proyectos de investigacion **** \n");
         return;
     } else {
-        printf("\n==> Creando Orden de Trabajo <==\n");
+        printf("\n==> Creando Proyecto de Investigacion <==\n");
         do {
-            cout << "\nNumero de orden: ";
-            cin >> orden.numero;
+             cout << "\nEspecialidad del investigador: ";
+            cin >> proy.lider.especialidad;
             cout << "Fecha (dia mes año): ";
-            cin >> orden.fecha.dia >> orden.fecha.mes >> orden.fecha.ano;
+            cin >> proy.fechaInicio.dia >> proy.fechaInicio.mes >> proy.fechaInicio.ano;
             cout << "Nombre del responsable: ";
-            fflush(stdin);
-            gets(orden.responsable.nombre);
-            cout << "ID del responsable: ";
-            cin >> orden.responsable.id;
-
-            fwrite(&orden, sizeof(OrdenTrabajo), 1, fd);
-            printf("\n>> Desea ingresar otra orden de trabajo? (Si-s No-n): ");
+            gets(proy.lider.nombre);
+            cout << "Titulo del investigador: ";
+            cin >> proy.titulo;
+			cout << "ID del investigador: ";
+            cin >> proy.ID;
+            
+            fwrite(&proy, sizeof(ProyectoInvestigacion), 1, fd);
+            printf("\n>> Desea ingresar otrao proyecto? (Si-s No-n): ");
             fflush(stdin);
             scanf("%c", &continuar);
         } while ((continuar == 's') || (continuar == 'S'));
@@ -138,57 +140,43 @@ void agregar() {
 
 void visualizar() {
     int registro = 0;
-    OrdenTrabajo orden;
+    ProyectoInvestigacion proy;
     fd = fopen(direccion, "rb");
     
     if (fd == NULL) {
         printf("\n*** Error al tratar de abrir el archivo ***\n");
         return;
     } else {
-        fread(&orden, sizeof(OrdenTrabajo), 1, fd);
+        fread(&proy, sizeof(ProyectoInvestigacion), 1, fd);
         
-        printf("\n ** Mostrando datos del archivo OrdenTrabajo **\n");
-        printf("---------------------------------------------------\n");
-        printf("|Reg.|    Nombre   | Id |     Fecha     | Numero |\n");
-        printf("---------------------------------------------------");
+        printf("\n ** Mostrando datos del archivo ProyectoInvestigacion **\n");
+        printf("-------------------------------------------------------------\n");
+        printf("|Reg.|    Nombre   | Especialidad |     Fecha     | titulo |\n");
+        printf("-------------------------------------------------------------");
         
         while (!feof(fd)) {
             registro++;
             printf("\n|%4i", registro);
-            printf("| %10s ", orden.responsable.nombre);
-            printf("| %2i ", orden.responsable.id);
-        	printf("| %10s ", orden.fecha);
-            printf("| %2i ", orden.numero);
-            fread(&orden, sizeof(OrdenTrabajo), 1, fd);
+            printf("| %10s ", proy.lider.nombre);
+            printf("| %2i ", proy.lider.especialidad);
+        	printf("| %10s ", proy.fechaInicio);
+            printf("| %2i ", proy.titulo);
+            printf("| %2i ", proy.ID);
+            fread(&proy, sizeof(ProyectoInvestigacion), 1, fd);
         }
     }
     fclose(fd);
 }
 
-/*void ordenar(OrdenTrabajo a[], int n){
-	int pasada, j, comparacion;
-	OrdenTrabajo aux;
-	for(pasada = 0; pasada < n - 1; pasada++){
-		for(j = 0; j < n - pasada - 1; j++){
-			comparacion = strcmp(a[j].responsable.nombre, a[j + 1].responsable.nombre);
-			if (comparacion > 0){
-				aux = a[j];
-				a[j] = a[j + 1];
-				a[j + 1] = aux;
-			}
-		}
-	}
-}
-*/
 
-void ordBurbuja(OrdenTrabajo a[], int n) {
+void ordBurbuja(ProyectoInvestigacion a[], int n) {
     int pasada, j;
     for (pasada = 0; pasada < n - 1; pasada++) {
         /* bucle externo controla la cantidad de pasadas */
         for (j = 0; j < n - pasada - 1; j++) {
-            if (a[j].numero > a[j + 1].numero) { // Cambia este campo para ordenar por número
+            if (a[j].ID > a[j + 1].ID) { // Cambia este campo para ordenar por número
                 /* elementos desordenados, es necesario intercambio */
-                OrdenTrabajo aux = a[j];
+                ProyectoInvestigacion aux = a[j];
                 a[j] = a[j + 1];
                 a[j + 1] = aux;
             }
@@ -197,45 +185,45 @@ void ordBurbuja(OrdenTrabajo a[], int n) {
 }
 
 void ordenar() {
-    OrdenTrabajo *ordenes = NULL; // Cambiar nullptr a NULL
+    ProyectoInvestigacion *proyectos = NULL; // Cambiar nullptr a NULL
     int count = 0;
 
     fd = fopen(direccion, "rb");
     if (fd == NULL) {
-        printf("\n*** Error al tratar de abrir el archivo de órdenes de trabajo **** \n");
+        printf("\n*** Error al tratar de abrir el archivo de proyecto de investigacion **** \n");
         return;
     }
 
     // Contar el número de registros
     fseek(fd, 0, SEEK_END);
-    count = ftell(fd) / sizeof(OrdenTrabajo);
+    count = ftell(fd) / sizeof(ProyectoInvestigacion);
     fseek(fd, 0, SEEK_SET);
 
     // Asignar memoria para leer los registros
-    ordenes = new OrdenTrabajo[count];
-    fread(ordenes, sizeof(OrdenTrabajo), count, fd);
+    proyectos = new ProyectoInvestigacion[count];
+    fread(proyectos, sizeof(ProyectoInvestigacion), count, fd);
     fclose(fd);
 
     // Llamar al método de ordenamiento burbuja
-    ordBurbuja(ordenes, count); // Asegúrate de pasar ambos argumentos
+    ordBurbuja(proyectos, count); // Asegúrate de pasar ambos argumentos
 
     // Guardar las órdenes ordenadas en un nuevo archivo
     fd_ordenado = fopen(direccion_ordenado, "wb");
     if (fd_ordenado == NULL) {
         printf("\n*** Error al tratar de abrir el archivo de órdenes ordenadas **** \n");
-        delete[] ordenes; // Liberar memoria
+        delete[] proyectos; // Liberar memoria
         return;
     }
 
-    fwrite(ordenes, sizeof(OrdenTrabajo), count, fd_ordenado);
+    fwrite(proyectos, sizeof(ProyectoInvestigacion), count, fd_ordenado);
     fclose(fd_ordenado);
-    delete[] ordenes; // Liberar memoria
+    delete[] proyectos; // Liberar memoria
 
     printf("\nÓrdenes de trabajo ordenadas exitosamente.\n");
 }
 
 void visualizar_ordenado() {
-    OrdenTrabajo orden;
+    ProyectoInvestigacion proy;
     fd_ordenado = fopen(direccion_ordenado, "rb");
 
     if (fd_ordenado == NULL) {
@@ -243,19 +231,20 @@ void visualizar_ordenado() {
         return;
     }
     printf("\n==> Visualizando Ordenes de Trabajo Ordenadas <==\n");
-    while (fread(&orden, sizeof(OrdenTrabajo), 1, fd_ordenado)) {
-        cout << "Numero de orden: " << orden.numero << ", "
-             << "Fecha: " << orden.fecha.dia << "/" 
-             << orden.fecha.mes << "/" << orden.fecha.ano << ", "
-             << "Responsable: " << orden.responsable.nombre << ", "
-             << "ID: " << orden.responsable.id << endl;
+    while (fread(&proy, sizeof(ProyectoInvestigacion), 1, fd_ordenado)) {
+        cout << "Numero de orden: " << proy.lider.especialidad << ", "
+             << "Fecha: " << proy.fechaInicio.dia << "/" 
+             << proy.fechaInicio.mes << "/" << proy.fechaInicio.ano << ", "
+             << "Responsable: " << proy.lider.nombre << ", "
+             << "ID: " << proy.ID << endl  << ", "
+              << "Titulo: " << proy.titulo;
     }
     fclose(fd_ordenado);
 }
 void eliminar_registros() {
-    int numeroOrden;
-    cout << "Ingrese el número de orden a eliminar: ";
-    cin >> numeroOrden;
+    int ID;
+    cout << "Ingrese la ID de la investigacion: ";
+    cin >> ID;
 
     // Abrir el archivo y contar registros
     fd = fopen(direccion, "rb");
@@ -266,22 +255,22 @@ void eliminar_registros() {
 
     // Contar el número de registros
     fseek(fd, 0, SEEK_END);
-    int count = ftell(fd) / sizeof(OrdenTrabajo);
+    int count = ftell(fd) / sizeof(ProyectoInvestigacion);
     fseek(fd, 0, SEEK_SET);
 
     // Crear un arreglo para almacenar los registros existentes
-    OrdenTrabajo *ordenes = new OrdenTrabajo[count];
-    fread(ordenes, sizeof(OrdenTrabajo), count, fd);
+    ProyectoInvestigacion *proyectos = new ProyectoInvestigacion[count];
+    fread(proyectos, sizeof(ProyectoInvestigacion), count, fd);
     fclose(fd);
 
     // Eliminar el registro correspondiente
     bool encontrado = false;
     for (int i = 0; i < count; i++) {
-        if (ordenes[i].numero == numeroOrden) {
+        if (proyectos[i].ID == ID) {
             encontrado = true;
             // Desplazar los registros hacia la izquierda
             for (int j = i; j < count - 1; j++) {
-                ordenes[j] = ordenes[j + 1];
+                proyectos[j] = proyectos[j + 1];
             }
             count--; // Reducir el conteo de registros
             break; // Salir del bucle al encontrar el registro
@@ -290,7 +279,7 @@ void eliminar_registros() {
 
     if (!encontrado) {
         cout << "Registro no encontrado." << endl;
-        delete[] ordenes; // Liberar memoria
+        delete[] proyectos; // Liberar memoria
         return;
     }
 
@@ -298,13 +287,13 @@ void eliminar_registros() {
     fd = fopen(direccion, "wb");
     if (fd == NULL) {
         printf("\n*** Error al tratar de abrir el archivo de órdenes de trabajo **** \n");
-        delete[] ordenes; // Liberar memoria
+        delete[] proyectos; // Liberar memoria
         return;
     }
 
-    fwrite(ordenes, sizeof(OrdenTrabajo), count, fd);
+    fwrite(proyectos, sizeof(ProyectoInvestigacion), count, fd);
     fclose(fd);
-    delete[] ordenes; // Liberar memoria
+    delete[] proyectos; // Liberar memoria
 
     cout << "Registro eliminado exitosamente." << endl;
 }
